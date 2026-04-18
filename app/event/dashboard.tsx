@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
 import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { formatEurAmount, formatEurCurrency } from '@/lib/formatMoney';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
 const PREVIEW_ROWS = 3;
@@ -15,16 +16,14 @@ const INCOME_GREEN = '#22c55e';
 const EXPENSE_RED = '#ef4444';
 
 function MoneyExpense({ amount }: { amount: number }) {
+  const label = formatEurCurrency(-Math.abs(amount));
   return (
-    <View className="flex-shrink-0 flex-row items-baseline pr-8">
-      <Text className="text-2xl font-bold tabular-nums" style={{ color: EXPENSE_RED }}>
-        −
-      </Text>
-      <Text className="ml-2 text-2xl font-bold tabular-nums" style={{ color: EXPENSE_RED }}>
-        {amount}
-      </Text>
-      <Text className="ml-3 text-lg font-bold tabular-nums" style={{ color: EXPENSE_RED }}>
-        €
+    <View className="min-w-[6.5rem] shrink-0 items-end justify-center">
+      <Text
+        accessibilityLabel={`Výdavok ${label}`}
+        className="text-lg font-semibold tabular-nums tracking-tight"
+        style={{ color: EXPENSE_RED }}>
+        {label}
       </Text>
     </View>
   );
@@ -32,11 +31,15 @@ function MoneyExpense({ amount }: { amount: number }) {
 
 function MoneyBalance({ amount }: { amount: number }) {
   return (
-    <View className="mt-1 flex-row items-baseline justify-center gap-1">
-      <Text className="text-5xl font-bold tabular-nums" style={{ color: INCOME_GREEN }}>
-        {amount}
+    <View
+      accessible
+      accessibilityRole="text"
+      accessibilityLabel={`Disponibilný zostatok ${formatEurCurrency(amount)}`}
+      className="mt-1 flex-row flex-wrap items-baseline justify-center gap-x-1 gap-y-0 px-2">
+      <Text className="text-5xl font-bold tabular-nums tracking-tight" style={{ color: INCOME_GREEN }}>
+        {formatEurAmount(amount)}
       </Text>
-      <Text className="text-3xl font-bold" style={{ color: INCOME_GREEN }}>
+      <Text className="text-3xl font-bold tabular-nums" style={{ color: INCOME_GREEN }}>
         €
       </Text>
     </View>
@@ -95,13 +98,17 @@ export default function DashboardScreen() {
               Disponibilný zostatok
             </MutedText>
             <MoneyBalance amount={balanceEur} />
-            <Pressable
-              accessibilityRole="button"
-              onPress={contribute}
-              className="mt-5 flex-row items-center justify-center gap-2 rounded-xl bg-tatra-elevated py-3 active:opacity-90">
-              <Plus color="#009fe3" size={22} />
-              <Text className="text-base font-semibold text-tatra-primary">Prispieť do budgetu</Text>
-            </Pressable>
+            <View className="mt-5 items-center">
+              <View className="w-full max-w-[236px]">
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={contribute}
+                  className="flex-row items-center justify-center gap-2 rounded-xl bg-tatra-elevated py-3 active:opacity-90">
+                  <Plus color="#009fe3" size={22} />
+                  <Text className="text-base font-semibold text-tatra-primary">Prispieť do budgetu</Text>
+                </Pressable>
+              </View>
+            </View>
             {showContributeInfo ? (
               <MutedText className="mt-3 text-center text-sm leading-5">
                 Tu by nasledoval prevod z tvojho účtu do spoločného budgetu eventu.
@@ -116,12 +123,12 @@ export default function DashboardScreen() {
 
           <TatraPanelBleed className="mt-3 py-0">
             {spendingByMember.length === 0 ? (
-              <MutedText className="py-8 text-center">Zatiaľ žiadne výdavky podľa členov.</MutedText>
+              <MutedText className="py-6 text-center">Zatiaľ žiadne výdavky podľa členov.</MutedText>
             ) : (
               spendingByMember.slice(0, PREVIEW_ROWS).map((m, index) => (
                   <View
                     key={m.key}
-                    className={`flex-row items-center gap-3 py-4 pl-1 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
+                    className={`flex-row items-center gap-3 py-3 pl-1 pr-2 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
                     <View className="w-1 self-stretch rounded-full" style={{ backgroundColor: EXPENSE_RED }} />
                     <View
                       className="h-10 w-10 items-center justify-center rounded-full"
@@ -165,12 +172,12 @@ export default function DashboardScreen() {
 
           <TatraPanelBleed className="mt-3 py-0">
             {categoriesSorted.length === 0 ? (
-              <MutedText className="py-8 text-center">Zatiaľ žiadne kategórie.</MutedText>
+              <MutedText className="py-6 text-center">Zatiaľ žiadne kategórie.</MutedText>
             ) : (
               categoriesSorted.slice(0, PREVIEW_ROWS).map((c, index) => (
                   <View
                     key={c.key}
-                    className={`flex-row items-center gap-3 py-4 pl-1 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
+                    className={`flex-row items-center gap-3 py-3 pl-1 pr-2 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
                     <View className="w-1 self-stretch rounded-full" style={{ backgroundColor: EXPENSE_RED }} />
                     <View className="h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: `${c.color}33` }}>
                       <View className="h-3 w-3 rounded-full" style={{ backgroundColor: c.color }} />
@@ -203,12 +210,12 @@ export default function DashboardScreen() {
 
           <TatraPanelBleed className="mt-3 py-0">
             {transactions.length === 0 ? (
-              <MutedText className="py-8 text-center">Zatiaľ žiadne výdavky.</MutedText>
+              <MutedText className="py-6 text-center">Zatiaľ žiadne výdavky.</MutedText>
             ) : (
               transactions.map((t, index) => (
                   <View
                     key={t.id}
-                    className={`flex-row items-center gap-3 py-4 pl-1 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
+                    className={`flex-row items-center gap-3 py-3 pl-1 pr-2 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
                     <View className="w-1 self-stretch rounded-full" style={{ backgroundColor: EXPENSE_RED }} />
                     <View
                       className="h-10 w-10 items-center justify-center rounded-full"

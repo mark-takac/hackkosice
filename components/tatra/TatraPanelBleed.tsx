@@ -11,6 +11,7 @@ type TatraPanelBleedProps = PropsWithChildren<{
 /**
  * Full-width gray sheet. Place inside a screen whose main column uses horizontal padding (`px-6`);
  * this cancels that padding so the panel spans edge to edge like in the Tatra banka app.
+ * Set vertical padding with `py-*` on `className` (no default vertical padding).
  */
 export function TatraPanelBleed({
   children,
@@ -25,7 +26,7 @@ export function TatraPanelBleed({
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole={accessibilityRole}
-      className={`-mx-6 border-y border-tatra-border bg-tatra-card px-6 py-5 ${accent ? 'border-l-[3px] border-l-tatra-primary' : ''} ${className ?? ''}`}>
+      className={`-mx-6 border-y border-tatra-border bg-tatra-card px-6 ${accent ? 'border-l-[3px] border-l-tatra-primary' : ''} ${className ?? ''}`}>
       {children}
     </View>
   );

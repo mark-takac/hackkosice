@@ -6,6 +6,7 @@ import { DonutChart } from '@/components/tatra/DonutChart';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
 import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { formatEurCurrency } from '@/lib/formatMoney';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
 export default function StatsScreen() {
@@ -40,12 +41,16 @@ export default function StatsScreen() {
           </View>
           <View className="mt-6 gap-2">
             {categories.map((c) => (
-              <View key={c.key} className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-2">
-                  <View className="h-3 w-3 rounded-full" style={{ backgroundColor: c.color }} />
-                  <Text className="text-base text-tatra-foreground">{c.label}</Text>
+              <View key={c.key} className="flex-row items-center justify-between gap-3 pr-2">
+                <View className="min-w-0 flex-1 flex-row items-center gap-2">
+                  <View className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: c.color }} />
+                  <Text className="text-base text-tatra-foreground" numberOfLines={1}>
+                    {c.label}
+                  </Text>
                 </View>
-                <Text className="font-semibold text-tatra-foreground">{c.amountEur} €</Text>
+                <Text className="shrink-0 text-right text-base font-semibold tabular-nums tracking-tight text-tatra-foreground">
+                  {formatEurCurrency(c.amountEur)}
+                </Text>
               </View>
             ))}
           </View>
@@ -58,9 +63,13 @@ export default function StatsScreen() {
           {transactions.slice(0, 5).map((t, index) => (
             <View
               key={t.id}
-              className={`flex-row items-center justify-between py-4 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
-              <Text className="text-tatra-foreground">{t.merchant}</Text>
-              <Text className="font-semibold text-tatra-foreground">{t.amountEur} €</Text>
+              className={`flex-row items-center justify-between gap-3 py-3 pr-2 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
+              <Text className="min-w-0 flex-1 text-base text-tatra-foreground" numberOfLines={1}>
+                {t.merchant}
+              </Text>
+              <Text className="shrink-0 text-right text-base font-semibold tabular-nums tracking-tight text-tatra-foreground">
+                {formatEurCurrency(t.amountEur)}
+              </Text>
             </View>
           ))}
         </TatraPanelBleed>
@@ -78,16 +87,20 @@ export default function StatsScreen() {
           </View>
           <View className="mt-6 gap-3">
             {contributors.map((p) => (
-              <View key={p.id} className="flex-row items-center gap-3">
+              <View key={p.id} className="flex-row items-center gap-3 pr-2">
                 <View
-                  className="h-10 w-10 items-center justify-center rounded-full"
+                  className="h-10 w-10 shrink-0 items-center justify-center rounded-full"
                   style={{ backgroundColor: `${p.color}44` }}>
                   <Text className="font-bold" style={{ color: p.color }}>
                     {p.initials}
                   </Text>
                 </View>
-                <Text className="flex-1 text-base text-tatra-foreground">{p.name}</Text>
-                <Text className="text-base font-bold text-tatra-foreground">{p.amountEur} €</Text>
+                <Text className="min-w-0 flex-1 text-base text-tatra-foreground" numberOfLines={1}>
+                  {p.name}
+                </Text>
+                <Text className="shrink-0 text-right text-base font-bold tabular-nums tracking-tight text-tatra-foreground">
+                  {formatEurCurrency(p.amountEur)}
+                </Text>
               </View>
             ))}
           </View>
