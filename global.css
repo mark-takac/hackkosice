@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Inter: map weight utilities to the correct face (React Native needs one file per weight). */
+@layer utilities {
+  .font-normal {
+    font-family: Inter_400Regular;
+    font-weight: 400;
+  }
+  .font-medium {
+    font-family: Inter_500Medium;
+    font-weight: 500;
+  }
+  .font-semibold {
+    font-family: Inter_600SemiBold;
+    font-weight: 600;
+  }
+  .font-bold {
+    font-family: Inter_700Bold;
+    font-weight: 700;
+  }
+}

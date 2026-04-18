@@ -4,6 +4,11 @@ module.exports = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter_400Regular'],
+        serif: ['Inter_400Regular'],
+        mono: ['Inter_400Regular'],
+      },
       colors: {
         tatra: {
           /** Deep navy (closer to TB app dark mode than pure black) */
