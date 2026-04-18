@@ -1,7 +1,9 @@
 import { router } from 'expo-router';
-import { Check } from 'lucide-react-native';
+import { Check, Eye, EyeOff } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, Text, View } from 'react-native';
+import { ActivityIndicator, Animated, Pressable, Text, View } from 'react-native';
+
+import { hapticLight } from '@/lib/haptics';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { TatraPrimaryButton } from '@/components/tatra/buttons';
@@ -17,6 +19,10 @@ const CARD_READY_DELAY_MS = 1200;
 
 const CARD_W = 320;
 const CARD_H = 200;
+
+/** Demo PAN — last four match the masked preview */
+const DEMO_CARD_NUMBER = '4917 0200 3399 4567';
+const DEMO_CARD_MASKED = '•••• •••• •••• 4567';
 
 function CardReadyIcon({ ready }: { ready: boolean }) {
   const checkOpacity = useRef(new Animated.Value(0)).current;
@@ -68,6 +74,8 @@ function VirtualCardSkeleton() {
 }
 
 function VirtualCardVisual() {
+  const [showNumber, setShowNumber] = useState(false);
+
   return (
     <View className="items-center shadow-2xl">
       <View className="overflow-hidden rounded-2xl" style={{ width: CARD_W, height: CARD_H }}>
@@ -90,7 +98,30 @@ function VirtualCardVisual() {
             </View>
             <Text className="text-[10px] font-semibold uppercase tracking-widest text-black/55">Tatra banka</Text>
           </View>
-          <Text className="font-mono text-lg tracking-widest text-black">•••• •••• •••• 4567</Text>
+          <View className="flex-row items-center gap-1.5">
+            <Text
+              className="min-w-0 flex-1 font-mono text-lg tracking-widest text-black"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.75}>
+              {showNumber ? DEMO_CARD_NUMBER : DEMO_CARD_MASKED}
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={showNumber ? 'Skryť číslo karty' : 'Zobraziť číslo karty'}
+              hitSlop={10}
+              onPress={() => {
+                hapticLight();
+                setShowNumber((v) => !v);
+              }}
+              className="shrink-0 rounded-lg p-1.5 active:opacity-70">
+              {showNumber ? (
+                <EyeOff color="rgba(0,0,0,0.55)" size={22} strokeWidth={2.25} />
+              ) : (
+                <Eye color="rgba(0,0,0,0.55)" size={22} strokeWidth={2.25} />
+              )}
+            </Pressable>
+          </View>
         </View>
       </View>
     </View>
