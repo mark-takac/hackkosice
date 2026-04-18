@@ -1,7 +1,7 @@
 import { Link, router } from 'expo-router';
 import { Link2, Plus } from 'lucide-react-native';
 import { useState } from 'react';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { TatraPrimaryButton } from '@/components/tatra/buttons';
 import { Screen } from '@/components/tatra/Screen';
@@ -13,16 +13,29 @@ export default function WelcomeScreen() {
   const { userFirstName, seedJoinedFromCode } = useEventFlow();
   const [code, setCode] = useState('');
   const [codeFocused, setCodeFocused] = useState(false);
+  const [codeError, setCodeError] = useState<string | null>(null);
+
+  const onCodeChange = (text: string) => {
+    setCode(text);
+    if (codeError) setCodeError(null);
+  };
 
   const onJoin = () => {
     const trimmed = code.trim();
     if (!trimmed) {
-      Alert.alert('Chýba kód', 'Zadaj kód eventu, ktorý si dostal od organizátora.');
+      setCodeError('Zadaj kód eventu, ktorý si dostal od organizátora.');
       return;
     }
+    setCodeError(null);
     seedJoinedFromCode(trimmed);
     router.replace('/event/dashboard');
   };
+
+  const codeBorderClass = codeError
+    ? 'border-tatra-destructive'
+    : codeFocused
+      ? 'border-tatra-primary'
+      : 'border-tatra-border';
 
   return (
     <Screen scroll keyboard>
@@ -70,17 +83,14 @@ export default function WelcomeScreen() {
           <Text className="mb-2 mt-5 text-xs font-medium uppercase tracking-wide text-tatra-muted">
             Kód eventu
           </Text>
-          <View
-            className={`w-full rounded-sm border bg-tatra-elevated ${
-              codeFocused ? 'border-tatra-primary' : 'border-tatra-border'
-            }`}>
+          <View className={`w-full rounded-sm border bg-tatra-elevated ${codeBorderClass}`}>
             <View className="flex-row items-stretch">
               <View className="justify-center border-r border-tatra-border bg-tatra-card/60 px-3.5">
                 <Link2 color={codeFocused ? '#009fe3' : '#71717a'} size={20} />
               </View>
               <TextInput
                 value={code}
-                onChangeText={setCode}
+                onChangeText={onCodeChange}
                 onFocus={() => setCodeFocused(true)}
                 onBlur={() => setCodeFocused(false)}
                 placeholder="Napr. TB-A1B2"
@@ -96,6 +106,11 @@ export default function WelcomeScreen() {
               />
             </View>
           </View>
+          {codeError ? (
+            <Text accessibilityRole="alert" className="mt-2 text-sm text-tatra-destructive">
+              {codeError}
+            </Text>
+          ) : null}
 
           <View className="mt-4 w-full">
             <TatraPrimaryButton onPress={onJoin}>Pripojiť sa</TatraPrimaryButton>
