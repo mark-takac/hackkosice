@@ -7,6 +7,7 @@ import { EventBottomTabs } from '@/components/tatra/EventBottomTabs';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
 import { MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { CategoryExpenseIcon } from '@/lib/category-expense-icon';
 import { formatEurCurrency } from '@/lib/formatMoney';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
@@ -35,11 +36,13 @@ function SectionHeader({
 }
 
 function CategoryLegendRow({
+  categoryKey,
   color,
   label,
   amountEur,
   pct,
 }: {
+  categoryKey: string;
   color: string;
   label: string;
   amountEur: number;
@@ -54,15 +57,19 @@ function CategoryLegendRow({
       accessibilityLabel={`${label}, ${pctLabel} z celku, suma ${money}`}
       className="rounded-xl bg-tatra-elevated/60 px-3 py-3">
       <View className="flex-row items-center justify-between gap-3">
-        <View className="min-w-0 flex-1 flex-row items-center gap-2">
-          <View className="h-3.5 w-3.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
-          <Text className="text-base font-medium text-tatra-foreground" numberOfLines={1}>
+        <View className="min-w-0 flex-1 flex-row items-center gap-3">
+          <View
+            className="h-10 w-10 shrink-0 items-center justify-center rounded-full"
+            style={{ backgroundColor: `${color}33` }}>
+            <CategoryExpenseIcon categoryKey={categoryKey} color={color} size={18} strokeWidth={2.2} />
+          </View>
+          <Text className="font-sans text-base font-medium text-tatra-foreground" numberOfLines={1}>
             {label}
           </Text>
         </View>
         <View className="shrink-0 items-end">
-          <Text className="text-xs font-semibold uppercase tracking-wide text-tatra-muted">{pctLabel}</Text>
-          <Text className="text-right text-base font-bold tabular-nums tracking-tight text-tatra-foreground">
+          <Text className="font-sans text-xs font-semibold uppercase tracking-wide text-tatra-muted">{pctLabel}</Text>
+          <Text className="text-right font-sans text-base font-bold tabular-nums tracking-tight text-tatra-foreground">
             {money}
           </Text>
         </View>
@@ -146,6 +153,7 @@ export default function StatsScreen() {
                 categories.map((c) => (
                   <CategoryLegendRow
                     key={c.key}
+                    categoryKey={c.key}
                     color={c.color}
                     label={c.label}
                     amountEur={c.amountEur}
@@ -172,10 +180,10 @@ export default function StatsScreen() {
                   <View className="h-9 w-9 items-center justify-center rounded-full bg-tatra-primary/12">
                     <Receipt color="#009fe3" size={18} strokeWidth={2} />
                   </View>
-                  <Text className="min-w-0 flex-1 text-base font-medium text-tatra-foreground" numberOfLines={1}>
+                  <Text className="min-w-0 flex-1 font-sans text-base font-medium text-tatra-foreground" numberOfLines={1}>
                     {t.merchant}
                   </Text>
-                  <Text className="shrink-0 text-right text-base font-bold tabular-nums tracking-tight text-tatra-foreground">
+                  <Text className="shrink-0 text-right font-sans text-base font-bold tabular-nums tracking-tight text-tatra-foreground">
                     {formatEurCurrency(t.amountEur)}
                   </Text>
                 </View>
@@ -215,12 +223,12 @@ export default function StatsScreen() {
                     <View
                       className="h-11 w-11 shrink-0 items-center justify-center rounded-full"
                       style={{ backgroundColor: `${p.color}44` }}>
-                      <Text className="text-sm font-bold" style={{ color: p.color }}>
+                      <Text className="font-sans text-sm font-bold" style={{ color: p.color }}>
                         {p.initials}
                       </Text>
                     </View>
                     <View className="min-w-0 flex-1">
-                      <Text className="text-base font-semibold text-tatra-foreground" numberOfLines={1}>
+                      <Text className="font-sans text-base font-semibold text-tatra-foreground" numberOfLines={1}>
                         {p.name}
                       </Text>
                       <View className="mt-2 h-2 w-full overflow-hidden rounded-full bg-tatra-border">
@@ -234,10 +242,10 @@ export default function StatsScreen() {
                       </View>
                     </View>
                     <View className="shrink-0 items-end">
-                      <Text className="text-xs font-semibold uppercase tracking-wide text-tatra-muted">
+                      <Text className="font-sans text-xs font-semibold uppercase tracking-wide text-tatra-muted">
                         {Math.round(pct)} %
                       </Text>
-                      <Text className="text-right text-base font-bold tabular-nums tracking-tight text-tatra-foreground">
+                      <Text className="text-right font-sans text-base font-bold tabular-nums tracking-tight text-tatra-foreground">
                         {money}
                       </Text>
                     </View>

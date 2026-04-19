@@ -73,7 +73,7 @@ export function AppRouteHeader({ titleOverride, headerHideBack }: AppRouteHeader
       <Text
         accessibilityRole="header"
         numberOfLines={1}
-        className="min-w-0 flex-1 py-0.5 pr-2 text-left text-base font-semibold text-tatra-foreground">
+        className="min-w-0 flex-1 py-0.5 pr-2 text-left font-sans text-base font-semibold text-tatra-foreground">
         {title}
       </Text>
       <BrandMark compact className="shrink-0 items-end justify-center pr-1" />

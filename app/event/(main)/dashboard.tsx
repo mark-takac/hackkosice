@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { CalendarDays, Plus } from 'lucide-react-native';
+import { Plus } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
@@ -7,6 +7,7 @@ import { EventBottomTabs } from '@/components/tatra/EventBottomTabs';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
 import { MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { CategoryExpenseIcon } from '@/lib/category-expense-icon';
 import { formatEurAmount, formatEurCurrency } from '@/lib/formatMoney';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
@@ -21,7 +22,7 @@ function MoneyExpense({ amount }: { amount: number }) {
     <View className="min-w-[6.5rem] shrink-0 items-end justify-center">
       <Text
         accessibilityLabel={`Výdavok ${label}`}
-        className="text-lg font-semibold tabular-nums tracking-tight"
+        className="font-sans text-lg font-semibold tabular-nums tracking-tight"
         style={{ color: EXPENSE_RED }}>
         {label}
       </Text>
@@ -36,10 +37,10 @@ function MoneyBalance({ amount }: { amount: number }) {
       accessibilityRole="text"
       accessibilityLabel={`Disponibilný zostatok ${formatEurCurrency(amount)}`}
       className="mt-1 flex-row flex-wrap items-baseline justify-center gap-x-1 gap-y-0 px-2">
-      <Text className="text-5xl font-bold tabular-nums tracking-tight" style={{ color: INCOME_GREEN }}>
+      <Text className="font-sans text-5xl font-bold tabular-nums tracking-tight" style={{ color: INCOME_GREEN }}>
         {formatEurAmount(amount)}
       </Text>
-      <Text className="text-3xl font-bold tabular-nums" style={{ color: INCOME_GREEN }}>
+      <Text className="font-sans text-3xl font-bold tabular-nums" style={{ color: INCOME_GREEN }}>
         €
       </Text>
     </View>
@@ -84,7 +85,7 @@ export default function DashboardScreen() {
             <View className="mt-6 flex-row items-center justify-between">
               <View className="flex-1 pr-2">
                 <MutedText className="text-sm">Aktívny event</MutedText>
-                <Text className="text-xl font-bold text-tatra-foreground" numberOfLines={1}>
+                <Text className="font-sans text-xl font-bold text-tatra-foreground" numberOfLines={1}>
                   {eventName || 'Skupinový budget'}
                 </Text>
               </View>
@@ -103,7 +104,7 @@ export default function DashboardScreen() {
                   onPress={contribute}
                   className="flex-row items-center justify-center gap-2 rounded-xl bg-tatra-elevated py-3 active:opacity-90">
                   <Plus color="#009fe3" size={22} />
-                  <Text className="text-base font-semibold text-tatra-primary">Prispieť do budgetu</Text>
+                  <Text className="font-sans text-base font-semibold text-tatra-primary">Prispieť do budgetu</Text>
                 </Pressable>
               </View>
             </View>
@@ -131,12 +132,12 @@ export default function DashboardScreen() {
                     <View
                       className="h-10 w-10 items-center justify-center rounded-full"
                       style={{ backgroundColor: `${m.tint}33` }}>
-                      <Text className="text-sm font-bold" style={{ color: m.tint }}>
+                      <Text className="font-sans text-sm font-bold" style={{ color: m.tint }}>
                         {m.initials}
                       </Text>
                     </View>
                     <View className="flex-1">
-                      <Text className="text-base font-semibold text-tatra-foreground">
+                      <Text className="font-sans text-base font-semibold text-tatra-foreground">
                         {contributors.find((c) => c.initials === m.initials)?.name ?? `Člen ${m.initials}`}
                       </Text>
                       <MutedText className="text-sm">Spolu utratené</MutedText>
@@ -152,7 +153,7 @@ export default function DashboardScreen() {
               accessibilityLabel="Zobraziť detailný prehľad výdavkov"
               onPress={() => router.push('/event/stats')}
               className="mt-2 px-6 py-2 active:opacity-80">
-              <Text className="text-center text-base font-semibold text-tatra-primary">Viac</Text>
+              <Text className="text-center font-sans text-base font-semibold text-tatra-primary">Viac</Text>
             </Pressable>
           ) : spendingByMember.length > 0 ? (
             <Pressable
@@ -160,12 +161,13 @@ export default function DashboardScreen() {
               accessibilityLabel="Zobraziť detailný prehľad výdavkov"
               onPress={() => router.push('/event/stats')}
               className="mt-2 px-6 py-2 active:opacity-80">
-              <Text className="text-center text-base font-semibold text-tatra-primary">Detailný prehľad</Text>
+              <Text className="text-center font-sans text-base font-semibold text-tatra-primary">Detailný prehľad</Text>
             </Pressable>
           ) : null}
 
           <View className="mt-8 px-6">
             <SectionTitle className="text-xl">Výdavky podľa kategórií</SectionTitle>
+            <MutedText className="mt-1 text-sm">Súčty podľa typu platby (potraviny, palivo, …).</MutedText>
           </View>
 
           <TatraPanelBleed className="mt-3 py-0">
@@ -177,10 +179,12 @@ export default function DashboardScreen() {
                     key={c.key}
                     className={`flex-row items-center gap-3 py-3 pl-1 pr-2 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
                     <View className="w-1 self-stretch rounded-full" style={{ backgroundColor: EXPENSE_RED }} />
-                    <View className="h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: `${c.color}33` }}>
-                      <View className="h-3 w-3 rounded-full" style={{ backgroundColor: c.color }} />
+                    <View
+                      className="h-10 w-10 items-center justify-center rounded-full"
+                      style={{ backgroundColor: `${c.color}33` }}>
+                      <CategoryExpenseIcon categoryKey={c.key} color={c.color} size={18} strokeWidth={2.2} />
                     </View>
-                    <Text className="flex-1 text-base font-semibold text-tatra-foreground">{c.label}</Text>
+                    <Text className="flex-1 font-sans text-base font-semibold text-tatra-foreground">{c.label}</Text>
                     <MoneyExpense amount={c.amountEur} />
                   </View>
                 ))
@@ -191,29 +195,22 @@ export default function DashboardScreen() {
               accessibilityRole="button"
               onPress={() => router.push('/event/stats')}
               className="mt-2 px-6 py-2 active:opacity-80">
-              <Text className="text-center text-base font-semibold text-tatra-primary">Viac</Text>
+              <Text className="text-center font-sans text-base font-semibold text-tatra-primary">Viac</Text>
             </Pressable>
           ) : categoriesSorted.length > 0 ? (
             <Pressable
               accessibilityRole="button"
               onPress={() => router.push('/event/stats')}
               className="mt-2 px-6 py-2 active:opacity-80">
-              <Text className="text-center text-base font-semibold text-tatra-primary">Detailný prehľad</Text>
+              <Text className="text-center font-sans text-base font-semibold text-tatra-primary">Detailný prehľad</Text>
             </Pressable>
           ) : null}
 
           <View className="mt-8 px-6">
-            <View className="flex-row items-start gap-3">
-              <View className="mt-0.5 h-10 w-10 items-center justify-center rounded-2xl bg-tatra-primary/15">
-                <CalendarDays color="#009fe3" size={20} strokeWidth={2.2} />
-              </View>
-              <View className="min-w-0 flex-1">
-                <SectionTitle className="text-xl">Výdavky za posledný týždeň</SectionTitle>
-                <MutedText className="mt-1 text-sm leading-5">
-                  Zoznam účteniek — rýchlo uvidíš dni s vyšším výdavkom.
-                </MutedText>
-              </View>
-            </View>
+            <SectionTitle className="text-xl">Výdavky za posledný týždeň</SectionTitle>
+            <MutedText className="mt-1 text-sm leading-5">
+              Zoznam účteniek — rýchlo uvidíš dni s vyšším výdavkom.
+            </MutedText>
           </View>
 
           <TatraPanelBleed className="mt-3 py-0">
@@ -230,12 +227,12 @@ export default function DashboardScreen() {
                   <View
                     className="h-10 w-10 items-center justify-center rounded-full"
                     style={{ backgroundColor: `${t.tint}33` }}>
-                    <Text className="text-sm font-bold" style={{ color: t.tint }}>
+                    <Text className="font-sans text-sm font-bold" style={{ color: t.tint }}>
                       {t.initials}
                     </Text>
                   </View>
                   <View className="flex-1">
-                    <Text className="text-base font-semibold text-tatra-foreground">{t.merchant}</Text>
+                    <Text className="font-sans text-base font-semibold text-tatra-foreground">{t.merchant}</Text>
                     <MutedText className="text-sm">{t.dateLabel}</MutedText>
                   </View>
                   <MoneyExpense amount={t.amountEur} />

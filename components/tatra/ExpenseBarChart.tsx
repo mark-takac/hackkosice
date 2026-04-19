@@ -65,10 +65,10 @@ export function ExpenseBarChart({ data, height = 168, accessibilityLabel }: Expe
       <View className="-mt-1 w-full max-w-[280px] flex-row justify-between px-1">
         {data.map((d) => (
           <View key={d.label} className="min-w-0 flex-1 items-center px-0.5">
-            <Text className="text-center text-[11px] font-semibold tabular-nums text-tatra-foreground" numberOfLines={1}>
+            <Text className="text-center font-sans text-[11px] font-semibold tabular-nums text-tatra-foreground" numberOfLines={1}>
               {formatEurCurrency(d.value)}
             </Text>
-            <Text className="mt-0.5 text-center text-[10px] text-tatra-muted" numberOfLines={1}>
+            <Text className="mt-0.5 text-center font-sans text-[10px] text-tatra-muted" numberOfLines={1}>
               {d.label}
             </Text>
           </View>

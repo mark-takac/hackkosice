@@ -34,7 +34,7 @@ export function TatraPrimaryButton({
       {loading ? (
         <ActivityIndicator color="#fff" />
       ) : isStringChild(children) ? (
-        <Text className="text-center text-base font-semibold text-tatra-primary-foreground">{children}</Text>
+        <Text className="text-center font-sans text-base font-semibold text-tatra-primary-foreground">{children}</Text>
       ) : (
         children
       )}
@@ -59,7 +59,7 @@ export function TatraSecondaryButton({
       }}
       className={`rounded-xl bg-tatra-elevated py-4 active:opacity-90 ${disabled ? 'opacity-50' : ''} ${className ?? ''}`}>
       {isStringChild(children) ? (
-        <Text className="text-center text-base font-semibold text-tatra-secondary-foreground">{children}</Text>
+        <Text className="text-center font-sans text-base font-semibold text-tatra-secondary-foreground">{children}</Text>
       ) : (
         children
       )}
@@ -80,7 +80,7 @@ export function TatraGhostButton({
         onPress?.();
       }}
       className={`py-3 active:opacity-80 ${className ?? ''}`}>
-      <Text className="text-center text-base font-medium text-tatra-primary">{children}</Text>
+      <Text className="text-center font-sans text-base font-medium text-tatra-primary">{children}</Text>
     </Pressable>
   );
 }

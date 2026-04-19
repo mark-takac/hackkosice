@@ -122,13 +122,13 @@ export function DonutChart({
           ) : (
             <View className="items-center">
               {centerTitle ? (
-                <Text className="text-center text-[11px] font-semibold uppercase tracking-wider text-tatra-muted">
+                <Text className="text-center font-sans text-[11px] font-semibold uppercase tracking-wider text-tatra-muted">
                   {centerTitle}
                 </Text>
               ) : null}
               {centerValue ? (
                 <Text
-                  className="mt-0.5 text-center text-lg font-bold tabular-nums tracking-tight text-tatra-foreground"
+                  className="mt-0.5 text-center font-sans text-lg font-bold tabular-nums tracking-tight text-tatra-foreground"
                   numberOfLines={1}
                   adjustsFontSizeToFit
                   minimumFontScale={0.75}>

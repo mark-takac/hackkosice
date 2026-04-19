@@ -93,14 +93,14 @@ function VirtualCardVisual() {
         <View className="absolute inset-0 justify-between p-5">
           <View className="flex-row items-start justify-between">
             <View>
-              <Text className="text-xs font-semibold uppercase tracking-widest text-black/70">Virtuálna karta</Text>
-              <Text className="mt-1 text-lg font-bold text-black">FAMILY CARD</Text>
+              <Text className="font-sans text-xs font-semibold uppercase tracking-widest text-black/70">Virtuálna karta</Text>
+              <Text className="mt-1 font-sans text-lg font-bold text-black">FAMILY CARD</Text>
             </View>
-            <Text className="text-[10px] font-semibold uppercase tracking-widest text-black/55">Tatra banka</Text>
+            <Text className="font-sans text-[10px] font-semibold uppercase tracking-widest text-black/55">Tatra banka</Text>
           </View>
           <View className="flex-row items-center gap-1.5">
             <Text
-              className="min-w-0 flex-1 font-mono text-lg tracking-widest text-black"
+              className="min-w-0 flex-1 font-sans text-lg tabular-nums tracking-widest text-black"
               numberOfLines={1}
               adjustsFontSizeToFit
               minimumFontScale={0.75}>
@@ -175,12 +175,12 @@ export default function CardSuccessScreen() {
             <MutedText className="text-center">
               {ready ? (
                 <>
-                  Virtuálna karta pre event <Text className="font-semibold text-tatra-foreground">„{title}“</Text> bola
+                  Virtuálna karta pre event <Text className="font-sans font-semibold text-tatra-foreground">„{title}“</Text> bola
                   úspešne vytvorená.
                 </>
               ) : (
                 <>
-                  Virtuálna karta pre event <Text className="font-semibold text-tatra-foreground">„{title}“</Text> sa
+                  Virtuálna karta pre event <Text className="font-sans font-semibold text-tatra-foreground">„{title}“</Text> sa
                   vytvára…
                 </>
               )}
@@ -195,7 +195,7 @@ export default function CardSuccessScreen() {
         <TatraPanelBleed accent className="mt-8 py-5">
           <View className="flex-row gap-3">
             <View className="h-8 w-8 shrink-0 items-center justify-center rounded-full bg-tatra-primary/20">
-              <Text className="text-sm font-bold text-tatra-primary">i</Text>
+              <Text className="font-sans text-sm font-bold text-tatra-primary">i</Text>
             </View>
             <MutedText className="flex-1 text-sm leading-5">
               Karta je naviazaná na spoločný budget eventu. Výdavky uvidíte v prehľade v aplikácii Tatra banka.

@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Home, PieChart, Users } from 'lucide-react-native';
+import { ChartLine, Home, Users } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -42,7 +42,7 @@ export function EventBottomTabs({ active }: EventBottomTabsProps) {
           <Home color={active === 'home' ? PRIMARY : MUTED_ICON} size={22} />
         </View>
         <Text
-          className={`text-xs font-medium ${active === 'home' ? 'text-tatra-primary' : 'text-tatra-muted'}`}>
+          className={`font-sans text-xs font-medium ${active === 'home' ? 'text-tatra-primary' : 'text-tatra-muted'}`}>
           Domov
         </Text>
       </Pressable>
@@ -60,7 +60,7 @@ export function EventBottomTabs({ active }: EventBottomTabsProps) {
           <Users color={active === 'members' ? PRIMARY : MUTED_ICON} size={22} />
         </View>
         <Text
-          className={`text-xs font-medium ${active === 'members' ? 'text-tatra-primary' : 'text-tatra-muted'}`}>
+          className={`font-sans text-xs font-medium ${active === 'members' ? 'text-tatra-primary' : 'text-tatra-muted'}`}>
           Členovia
         </Text>
       </Pressable>
@@ -75,10 +75,10 @@ export function EventBottomTabs({ active }: EventBottomTabsProps) {
           className={`h-12 w-12 items-center justify-center rounded-full ${
             active === 'stats' ? 'bg-tatra-primary/20 ring-2 ring-tatra-primary/50' : 'bg-tatra-elevated'
           }`}>
-          <PieChart color={active === 'stats' ? PRIMARY : MUTED_ICON} size={22} />
+          <ChartLine color={active === 'stats' ? PRIMARY : MUTED_ICON} size={22} />
         </View>
         <Text
-          className={`text-xs font-medium ${active === 'stats' ? 'text-tatra-primary' : 'text-tatra-muted'}`}>
+          className={`font-sans text-xs font-medium ${active === 'stats' ? 'text-tatra-primary' : 'text-tatra-muted'}`}>
           Štatistiky
         </Text>
       </Pressable>
