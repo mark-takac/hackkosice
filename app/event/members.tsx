@@ -1,8 +1,7 @@
 import { router } from 'expo-router';
 import { Ban, ChevronRight, Trash2, UserPlus } from 'lucide-react-native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { TatraSecondaryButton } from '@/components/tatra/buttons';
@@ -20,9 +19,6 @@ const CARD_HEIGHT = 196;
 const CARD_GAP = 12;
 const CARD_STRIDE = CARD_WIDTH + CARD_GAP;
 const CAROUSEL_PADDING_H = 24;
-
-const CAROUSEL_SLIDE_MS = 320;
-const CAROUSEL_SLIDE_EASING = Easing.out(Easing.cubic);
 
 const CHIP_GOLD = '#d4af37';
 
@@ -149,32 +145,37 @@ export default function MembersScreen() {
   } = useEventFlow();
   const canRemove = contributors.length > 1;
   const [activeCardIndex, setActiveCardIndex] = useState(0);
-  const carouselTranslateX = useSharedValue(0);
-
-  const carouselRowStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: carouselTranslateX.value }],
-  }));
+  const carouselRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     setActiveCardIndex((prev) => {
       const max = Math.max(0, contributors.length - 1);
       const clamped = Math.min(Math.max(0, prev), max);
-      carouselTranslateX.value = -clamped * CARD_STRIDE;
+      requestAnimationFrame(() => {
+        carouselRef.current?.scrollTo({ x: clamped * CARD_STRIDE, animated: false });
+      });
       return clamped;
     });
-  }, [contributors.length, carouselTranslateX]);
+  }, [contributors.length]);
+
+  const syncActiveIndexFromOffset = useCallback(
+    (offsetX: number) => {
+      const next = Math.round(offsetX / CARD_STRIDE);
+      const max = Math.max(0, contributors.length - 1);
+      const clamped = Math.min(Math.max(0, next), max);
+      setActiveCardIndex((prev) => (prev === clamped ? prev : clamped));
+    },
+    [contributors.length],
+  );
 
   const scrollToCardIndex = useCallback(
     (index: number) => {
       const i = Math.min(Math.max(0, index), Math.max(0, contributors.length - 1));
       hapticLight();
       setActiveCardIndex(i);
-      carouselTranslateX.value = withTiming(-i * CARD_STRIDE, {
-        duration: CAROUSEL_SLIDE_MS,
-        easing: CAROUSEL_SLIDE_EASING,
-      });
+      carouselRef.current?.scrollTo({ x: i * CARD_STRIDE, animated: true });
     },
-    [contributors.length, carouselTranslateX],
+    [contributors.length],
   );
 
   const openMemberSettings = useCallback((memberId: string) => {
@@ -255,15 +256,25 @@ export default function MembersScreen() {
               </View>
 
               <View className="mt-4 overflow-hidden">
-                <Animated.View
-                  style={[
-                    {
-                      flexDirection: 'row',
-                      paddingLeft: CAROUSEL_PADDING_H,
-                      paddingRight: CAROUSEL_PADDING_H - CARD_GAP,
-                    },
-                    carouselRowStyle,
-                  ]}>
+                <ScrollView
+                  ref={carouselRef}
+                  horizontal
+                  nestedScrollEnabled
+                  showsHorizontalScrollIndicator={false}
+                  decelerationRate="fast"
+                  snapToInterval={CARD_STRIDE}
+                  snapToAlignment="start"
+                  disableIntervalMomentum
+                  style={{ height: CARD_HEIGHT }}
+                  contentContainerStyle={{
+                    flexDirection: 'row',
+                    paddingLeft: CAROUSEL_PADDING_H,
+                    paddingRight: CAROUSEL_PADDING_H - CARD_GAP,
+                  }}
+                  onMomentumScrollEnd={(e) =>
+                    syncActiveIndexFromOffset(e.nativeEvent.contentOffset.x)
+                  }
+                  onScrollEndDrag={(e) => syncActiveIndexFromOffset(e.nativeEvent.contentOffset.x)}>
                   {contributors.map((item) => (
                     <MemberVirtualCard
                       key={item.id}
@@ -273,7 +284,7 @@ export default function MembersScreen() {
                       paymentsDisabled={!!cardPaymentsOffByContributorId[item.id]}
                     />
                   ))}
-                </Animated.View>
+                </ScrollView>
               </View>
 
               <View
