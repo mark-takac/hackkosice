@@ -3,8 +3,8 @@ import { CalendarDays, Plus } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
-import { ExpenseBarChart } from '@/components/tatra/ExpenseBarChart';
 import { EventBottomTabs } from '@/components/tatra/EventBottomTabs';
+import { ExpenseBarChart } from '@/components/tatra/ExpenseBarChart';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
 import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
