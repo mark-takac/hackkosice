@@ -78,6 +78,8 @@ function randomCode() {
 
 type EventFlowState = {
   userFirstName: string;
+  /** Contributor row representing the signed-in user (for „tvoja karta“ UI). */
+  viewerContributorId: string;
   eventName: string;
   inviteCode: string;
   balanceEur: number;
@@ -85,17 +87,25 @@ type EventFlowState = {
   categories: CategorySlice[];
   contributors: ContributorMock[];
   joinedViaCode: boolean;
+  /** When true, platby touto virtuálnou kartou sú vypnuté (per člen). */
+  cardPaymentsOffByContributorId: Record<string, boolean>;
+  /** Push / upozornenia len pre kartu diváka (demo). */
+  viewerExpenseAlertsEnabled: boolean;
 };
 
 type EventFlowContextValue = EventFlowState & {
   startEventDraft: (name: string) => void;
   seedJoinedFromCode: (code: string) => void;
+  removeContributor: (id: string) => void;
+  setContributorCardPaymentsOff: (contributorId: string, paymentsOff: boolean) => void;
+  setViewerExpenseAlertsEnabled: (enabled: boolean) => void;
 };
 
 const EventFlowContext = createContext<EventFlowContextValue | null>(null);
 
 const initialState: EventFlowState = {
   userFirstName: DEFAULT_USER,
+  viewerContributorId: '',
   eventName: '',
   inviteCode: '',
   balanceEur: 0,
@@ -103,11 +113,14 @@ const initialState: EventFlowState = {
   categories: [],
   contributors: [],
   joinedViaCode: false,
+  cardPaymentsOffByContributorId: {},
+  viewerExpenseAlertsEnabled: true,
 };
 
 function joinedPayload(code: string): EventFlowState {
   return {
     userFirstName: DEFAULT_USER,
+    viewerContributorId: MOCK_CONTRIBUTORS[0]?.id ?? '',
     eventName: MOCK_JOINED_NAME,
     inviteCode: code.trim().toUpperCase(),
     balanceEur: MOCK_JOINED_BALANCE,
@@ -115,6 +128,8 @@ function joinedPayload(code: string): EventFlowState {
     categories: MOCK_CATEGORIES,
     contributors: MOCK_CONTRIBUTORS,
     joinedViaCode: true,
+    cardPaymentsOffByContributorId: {},
+    viewerExpenseAlertsEnabled: true,
   };
 }
 
@@ -124,6 +139,7 @@ export function EventFlowProvider({ children }: PropsWithChildren) {
   const startEventDraft = useCallback((name: string) => {
     setState({
       userFirstName: DEFAULT_USER,
+      viewerContributorId: MOCK_CONTRIBUTORS[0]?.id ?? '',
       eventName: name.trim(),
       inviteCode: randomCode(),
       balanceEur: MOCK_JOINED_BALANCE,
@@ -131,6 +147,8 @@ export function EventFlowProvider({ children }: PropsWithChildren) {
       categories: MOCK_CATEGORIES,
       contributors: MOCK_CONTRIBUTORS,
       joinedViaCode: false,
+      cardPaymentsOffByContributorId: {},
+      viewerExpenseAlertsEnabled: true,
     });
   }, []);
 
@@ -138,13 +156,50 @@ export function EventFlowProvider({ children }: PropsWithChildren) {
     setState(joinedPayload(code));
   }, []);
 
+  const removeContributor = useCallback((id: string) => {
+    setState((prev) => {
+      if (prev.contributors.length <= 1) return prev;
+      const next = prev.contributors.filter((c) => c.id !== id);
+      let viewerContributorId = prev.viewerContributorId;
+      if (id === viewerContributorId || !next.some((c) => c.id === viewerContributorId)) {
+        viewerContributorId = next[0]?.id ?? '';
+      }
+      const cardPaymentsOffByContributorId = { ...prev.cardPaymentsOffByContributorId };
+      delete cardPaymentsOffByContributorId[id];
+      return { ...prev, contributors: next, viewerContributorId, cardPaymentsOffByContributorId };
+    });
+  }, []);
+
+  const setContributorCardPaymentsOff = useCallback((contributorId: string, paymentsOff: boolean) => {
+    setState((prev) => {
+      const cardPaymentsOffByContributorId = { ...prev.cardPaymentsOffByContributorId };
+      if (paymentsOff) cardPaymentsOffByContributorId[contributorId] = true;
+      else delete cardPaymentsOffByContributorId[contributorId];
+      return { ...prev, cardPaymentsOffByContributorId };
+    });
+  }, []);
+
+  const setViewerExpenseAlertsEnabled = useCallback((enabled: boolean) => {
+    setState((prev) => ({ ...prev, viewerExpenseAlertsEnabled: enabled }));
+  }, []);
+
   const value = useMemo<EventFlowContextValue>(
     () => ({
       ...state,
       startEventDraft,
       seedJoinedFromCode,
+      removeContributor,
+      setContributorCardPaymentsOff,
+      setViewerExpenseAlertsEnabled,
     }),
-    [state, startEventDraft, seedJoinedFromCode],
+    [
+      state,
+      startEventDraft,
+      seedJoinedFromCode,
+      removeContributor,
+      setContributorCardPaymentsOff,
+      setViewerExpenseAlertsEnabled,
+    ],
   );
 
   return <EventFlowContext.Provider value={value}>{children}</EventFlowContext.Provider>;

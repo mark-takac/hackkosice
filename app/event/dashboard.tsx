@@ -1,9 +1,10 @@
 import { router } from 'expo-router';
-import { CreditCard, Home, PieChart, Plus } from 'lucide-react-native';
+import { CalendarDays, Plus } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ExpenseBarChart } from '@/components/tatra/ExpenseBarChart';
+import { EventBottomTabs } from '@/components/tatra/EventBottomTabs';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
 import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
@@ -47,7 +48,6 @@ function MoneyBalance({ amount }: { amount: number }) {
 }
 
 export default function DashboardScreen() {
-  const insets = useSafeAreaInsets();
   const { eventName, balanceEur, transactions, categories, contributors } = useEventFlow();
   const [showContributeInfo, setShowContributeInfo] = useState(false);
 
@@ -73,6 +73,17 @@ export default function DashboardScreen() {
     () => [...categories].sort((a, b) => b.amountEur - a.amountEur),
     [categories],
   );
+
+  /** Súčty podľa štítku dňa (poradie ako v zozname transakcií). */
+  const spendingByDay = useMemo(() => {
+    const order: string[] = [];
+    const sums = new Map<string, number>();
+    for (const t of transactions) {
+      sums.set(t.dateLabel, (sums.get(t.dateLabel) ?? 0) + t.amountEur);
+      if (!order.includes(t.dateLabel)) order.push(t.dateLabel);
+    }
+    return order.map((label) => ({ label, value: sums.get(label) ?? 0 }));
+  }, [transactions]);
 
   return (
     <Screen>
@@ -205,16 +216,32 @@ export default function DashboardScreen() {
           ) : null}
 
           <View className="mt-8 px-6">
-            <SectionTitle className="text-xl">Výdavky za posledný týždeň</SectionTitle>
+            <View className="flex-row items-start gap-3">
+              <View className="mt-0.5 h-10 w-10 items-center justify-center rounded-2xl bg-tatra-primary/15">
+                <CalendarDays color="#009fe3" size={20} strokeWidth={2.2} />
+              </View>
+              <View className="min-w-0 flex-1">
+                <SectionTitle className="text-xl">Výdavky za posledný týždeň</SectionTitle>
+                <MutedText className="mt-1 text-sm leading-5">
+                  Stĺpcový graf podľa dňa a zoznam účteniek — rýchlo uvidíš dni s vyšším výdavkom.
+                </MutedText>
+              </View>
+            </View>
           </View>
 
           <TatraPanelBleed className="mt-3 py-0">
             {transactions.length === 0 ? (
               <MutedText className="py-6 text-center">Zatiaľ žiadne výdavky.</MutedText>
             ) : (
-              transactions.map((t, index) => (
+              <>
+                <View className="border-b border-tatra-border px-2 py-5">
+                  <ExpenseBarChart data={spendingByDay} />
+                </View>
+                {transactions.map((t, index) => (
                   <View
                     key={t.id}
+                    accessible
+                    accessibilityLabel={`${t.merchant}, ${t.dateLabel}, výdavok ${formatEurCurrency(-Math.abs(t.amountEur))}`}
                     className={`flex-row items-center gap-3 py-3 pl-1 pr-2 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
                     <View className="w-1 self-stretch rounded-full" style={{ backgroundColor: EXPENSE_RED }} />
                     <View
@@ -230,43 +257,13 @@ export default function DashboardScreen() {
                     </View>
                     <MoneyExpense amount={t.amountEur} />
                   </View>
-                ))
+                ))}
+              </>
             )}
           </TatraPanelBleed>
         </ScrollView>
 
-        <View
-          className="flex-row justify-around border-t border-tatra-border bg-tatra-card py-3"
-          style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Domov, aktuálna obrazovka"
-            className="items-center gap-1">
-            <View className="h-12 w-12 items-center justify-center rounded-full bg-tatra-primary/20 ring-2 ring-tatra-primary/50">
-              <Home color="#009fe3" size={22} />
-            </View>
-            <Text className="text-xs font-medium text-tatra-primary">Domov</Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Virtuálna karta, ukážka"
-            className="items-center gap-1">
-            <View className="h-12 w-12 items-center justify-center rounded-full bg-tatra-elevated">
-              <CreditCard color="#d4d4d8" size={22} />
-            </View>
-            <Text className="text-xs text-tatra-muted">Karta</Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Štatistiky výdavkov"
-            onPress={() => router.push('/event/stats')}
-            className="items-center gap-1">
-            <View className="h-12 w-12 items-center justify-center rounded-full bg-tatra-elevated">
-              <PieChart color="#d4d4d8" size={22} />
-            </View>
-            <Text className="text-xs text-tatra-muted">Štatistiky</Text>
-          </Pressable>
-        </View>
+        <EventBottomTabs active="home" />
       </View>
     </Screen>
   );
