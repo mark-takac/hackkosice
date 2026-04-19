@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { EventBottomTabs } from '@/components/tatra/EventBottomTabs';
-import { ExpenseBarChart } from '@/components/tatra/ExpenseBarChart';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
 import { MutedText, SectionTitle } from '@/components/tatra/Typography';
@@ -73,17 +72,6 @@ export default function DashboardScreen() {
     () => [...categories].sort((a, b) => b.amountEur - a.amountEur),
     [categories],
   );
-
-  /** Súčty podľa štítku dňa (poradie ako v zozname transakcií). */
-  const spendingByDay = useMemo(() => {
-    const order: string[] = [];
-    const sums = new Map<string, number>();
-    for (const t of transactions) {
-      sums.set(t.dateLabel, (sums.get(t.dateLabel) ?? 0) + t.amountEur);
-      if (!order.includes(t.dateLabel)) order.push(t.dateLabel);
-    }
-    return order.map((label) => ({ label, value: sums.get(label) ?? 0 }));
-  }, [transactions]);
 
   return (
     <Screen>
@@ -222,7 +210,7 @@ export default function DashboardScreen() {
               <View className="min-w-0 flex-1">
                 <SectionTitle className="text-xl">Výdavky za posledný týždeň</SectionTitle>
                 <MutedText className="mt-1 text-sm leading-5">
-                  Stĺpcový graf podľa dňa a zoznam účteniek — rýchlo uvidíš dni s vyšším výdavkom.
+                  Zoznam účteniek — rýchlo uvidíš dni s vyšším výdavkom.
                 </MutedText>
               </View>
             </View>
@@ -232,32 +220,27 @@ export default function DashboardScreen() {
             {transactions.length === 0 ? (
               <MutedText className="py-6 text-center">Zatiaľ žiadne výdavky.</MutedText>
             ) : (
-              <>
-                <View className="border-b border-tatra-border px-2 py-5">
-                  <ExpenseBarChart data={spendingByDay} />
-                </View>
-                {transactions.map((t, index) => (
+              transactions.map((t, index) => (
+                <View
+                  key={t.id}
+                  accessible
+                  accessibilityLabel={`${t.merchant}, ${t.dateLabel}, výdavok ${formatEurCurrency(-Math.abs(t.amountEur))}`}
+                  className={`flex-row items-center gap-3 py-3 pl-1 pr-2 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
+                  <View className="w-1 self-stretch rounded-full" style={{ backgroundColor: EXPENSE_RED }} />
                   <View
-                    key={t.id}
-                    accessible
-                    accessibilityLabel={`${t.merchant}, ${t.dateLabel}, výdavok ${formatEurCurrency(-Math.abs(t.amountEur))}`}
-                    className={`flex-row items-center gap-3 py-3 pl-1 pr-2 ${index > 0 ? 'border-t border-tatra-border' : ''}`}>
-                    <View className="w-1 self-stretch rounded-full" style={{ backgroundColor: EXPENSE_RED }} />
-                    <View
-                      className="h-10 w-10 items-center justify-center rounded-full"
-                      style={{ backgroundColor: `${t.tint}33` }}>
-                      <Text className="text-sm font-bold" style={{ color: t.tint }}>
-                        {t.initials}
-                      </Text>
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-base font-semibold text-tatra-foreground">{t.merchant}</Text>
-                      <MutedText className="text-sm">{t.dateLabel}</MutedText>
-                    </View>
-                    <MoneyExpense amount={t.amountEur} />
+                    className="h-10 w-10 items-center justify-center rounded-full"
+                    style={{ backgroundColor: `${t.tint}33` }}>
+                    <Text className="text-sm font-bold" style={{ color: t.tint }}>
+                      {t.initials}
+                    </Text>
                   </View>
-                ))}
-              </>
+                  <View className="flex-1">
+                    <Text className="text-base font-semibold text-tatra-foreground">{t.merchant}</Text>
+                    <MutedText className="text-sm">{t.dateLabel}</MutedText>
+                  </View>
+                  <MoneyExpense amount={t.amountEur} />
+                </View>
+              ))
             )}
           </TatraPanelBleed>
         </ScrollView>
