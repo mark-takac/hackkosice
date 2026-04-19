@@ -2,12 +2,27 @@ import type { PropsWithChildren } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AppRouteHeader } from '@/components/tatra/AppRouteHeader';
+
 type ScreenProps = PropsWithChildren<{
   scroll?: boolean;
   keyboard?: boolean;
+  /** Overrides the route-derived title in the header and on web `document.title`. */
+  headerTitle?: string;
+  /** Hide the global route header for this screen. */
+  hideRouteHeader?: boolean;
+  /** When true, the header never shows back (e.g. welcome). */
+  headerHideBack?: boolean;
 }>;
 
-export function Screen({ children, scroll, keyboard }: ScreenProps) {
+export function Screen({
+  children,
+  scroll,
+  keyboard,
+  headerTitle,
+  hideRouteHeader,
+  headerHideBack,
+}: ScreenProps) {
   const body = scroll ? (
     <ScrollView
       className="flex-1"
@@ -34,6 +49,9 @@ export function Screen({ children, scroll, keyboard }: ScreenProps) {
 
   return (
     <SafeAreaView className="flex-1 bg-tatra-background" edges={['top', 'left', 'right']}>
+      {hideRouteHeader ? null : (
+        <AppRouteHeader titleOverride={headerTitle} headerHideBack={headerHideBack} />
+      )}
       {wrapped}
     </SafeAreaView>
   );

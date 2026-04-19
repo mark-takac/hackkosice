@@ -7,7 +7,7 @@ import { Text, View } from 'react-native';
 import { TatraGhostButton, TatraPrimaryButton } from '@/components/tatra/buttons';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
-import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { MutedText } from '@/components/tatra/Typography';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
 function buildInviteLink(code: string) {
@@ -31,7 +31,6 @@ export default function InviteScreen() {
   return (
     <Screen scroll>
       <View className="flex-1 px-6 pt-4">
-        <BrandMark />
         <TatraPanelBleed className="mt-6 py-4">
           <View className="flex-row items-center gap-3">
             <View className="h-12 w-12 items-center justify-center rounded-xl bg-tatra-primary/20">
@@ -47,7 +46,6 @@ export default function InviteScreen() {
         </TatraPanelBleed>
 
         <View className="mt-8 gap-3">
-          <SectionTitle>Pozvi priateľov</SectionTitle>
           <MutedText>
             Zložte sa na spoločný budget a nakúpte všetko, čo potrebujete — platby kartou sú prehľadné pre
             celú skupinu.
@@ -71,10 +69,6 @@ export default function InviteScreen() {
         <TatraGhostButton onPress={skip} className="mt-6">
           Možno neskôr
         </TatraGhostButton>
-
-        <View className="mt-auto pt-8">
-          <TatraGhostButton onPress={() => router.back()}>Späť</TatraGhostButton>
-        </View>
       </View>
     </Screen>
   );

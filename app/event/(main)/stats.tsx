@@ -1,13 +1,12 @@
-import { router } from 'expo-router';
-import { ChevronLeft, PieChart, Receipt, Users } from 'lucide-react-native';
+import { PieChart, Receipt, Users } from 'lucide-react-native';
 import { useMemo } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { DonutChart } from '@/components/tatra/DonutChart';
 import { EventBottomTabs } from '@/components/tatra/EventBottomTabs';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
-import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { MutedText, SectionTitle } from '@/components/tatra/Typography';
 import { formatEurCurrency } from '@/lib/formatMoney';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
@@ -17,7 +16,7 @@ function SectionHeader({
   subtitle,
 }: {
   icon: typeof PieChart;
-  title: string;
+  title?: string;
   subtitle?: string;
 }) {
   return (
@@ -26,8 +25,10 @@ function SectionHeader({
         <Icon color="#009fe3" size={22} strokeWidth={2.2} />
       </View>
       <View className="min-w-0 flex-1">
-        <SectionTitle className="text-xl">{title}</SectionTitle>
-        {subtitle ? <MutedText className="mt-1 text-sm leading-5">{subtitle}</MutedText> : null}
+        {title ? <SectionTitle className="text-xl">{title}</SectionTitle> : null}
+        {subtitle ? (
+          <MutedText className={title ? 'mt-1 text-sm leading-5' : 'text-sm leading-5'}>{subtitle}</MutedText>
+        ) : null}
       </View>
     </View>
   );
@@ -119,19 +120,9 @@ export default function StatsScreen() {
           contentContainerStyle={{ paddingBottom: 24 }}
           showsVerticalScrollIndicator={false}>
           <View className="px-6">
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Späť"
-              onPress={() => router.back()}
-              className="mb-4 flex-row items-center gap-1 self-start py-2 active:opacity-80">
-              <ChevronLeft color="#009fe3" size={28} />
-              <Text className="text-base font-semibold text-tatra-primary">Späť</Text>
-            </Pressable>
-            <BrandMark />
             <View className="mt-6">
               <SectionHeader
                 icon={PieChart}
-                title="Všetky výdavky"
                 subtitle="Rozdelenie podľa kategórií podľa zúčtovaných platieb. Percentá sú z celkových výdavkov v kategóriách."
               />
             </View>

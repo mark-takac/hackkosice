@@ -7,7 +7,7 @@ import { EventBottomTabs } from '@/components/tatra/EventBottomTabs';
 import { ExpenseBarChart } from '@/components/tatra/ExpenseBarChart';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
-import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { MutedText, SectionTitle } from '@/components/tatra/Typography';
 import { formatEurAmount, formatEurCurrency } from '@/lib/formatMoney';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
@@ -93,7 +93,6 @@ export default function DashboardScreen() {
           contentContainerStyle={{ paddingBottom: 16 }}
           showsVerticalScrollIndicator={false}>
           <View className="px-6">
-            <BrandMark />
             <View className="mt-6 flex-row items-center justify-between">
               <View className="flex-1 pr-2">
                 <MutedText className="text-sm">Aktívny event</MutedText>

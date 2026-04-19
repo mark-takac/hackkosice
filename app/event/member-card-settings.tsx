@@ -1,20 +1,12 @@
 import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
-import {
-  Bell,
-  ChevronLeft,
-  ChevronRight,
-  Link2,
-  SlidersHorizontal,
-  UserPlus,
-  Wallet,
-} from 'lucide-react-native';
+import { Bell, ChevronRight, Link2, SlidersHorizontal, UserPlus, Wallet } from 'lucide-react-native';
 import { useMemo } from 'react';
 import { Alert, Pressable, Switch, Text, View } from 'react-native';
 
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
-import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { MutedText, SectionTitle } from '@/components/tatra/Typography';
 import { formatEurCurrency } from '@/lib/formatMoney';
 import { hapticLight } from '@/lib/haptics';
 import { useEventFlow } from '@/providers/EventFlowContext';
@@ -57,18 +49,9 @@ export default function MemberCardSettingsScreen() {
 
   if (!id || !member) {
     return (
-      <Screen scroll>
+      <Screen scroll headerTitle="Karta sa nenašla">
         <View className="flex-1 px-6 pb-10 pt-4">
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.back()}
-            className="mb-4 flex-row items-center gap-1 self-start py-2 active:opacity-80">
-            <ChevronLeft color={TATRA_PRIMARY} size={28} />
-            <Text className="text-base font-semibold text-tatra-primary">Späť</Text>
-          </Pressable>
-          <BrandMark />
-          <SectionTitle className="mt-8">Karta sa nenašla</SectionTitle>
-          <MutedText className="mt-2">Tento člen už v skupine nie je alebo odkaz je neplatný.</MutedText>
+          <MutedText className="mt-8">Tento člen už v skupine nie je alebo odkaz je neplatný.</MutedText>
         </View>
       </Screen>
     );
@@ -77,20 +60,10 @@ export default function MemberCardSettingsScreen() {
   const displayEvent = eventName.trim() || 'Skupinový budget';
 
   return (
-    <Screen scroll>
+    <Screen scroll headerTitle={member.name}>
       <View className="px-6 pb-10 pt-4">
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.back()}
-          className="mb-4 flex-row items-center gap-1 self-start py-2 active:opacity-80">
-          <ChevronLeft color={TATRA_PRIMARY} size={28} />
-          <Text className="text-base font-semibold text-tatra-primary">Späť</Text>
-        </Pressable>
-        <BrandMark />
-
         <View className="mt-6 gap-1">
           <MutedText className="text-sm">Virtuálna karta</MutedText>
-          <SectionTitle className="text-xl">{member.name}</SectionTitle>
           <MutedText className="mt-1 text-sm leading-5">
             {isViewer
               ? 'Úpravy tvojej karty, pozvánky a upozornenia. Číslo karty sa nezobrazuje.'

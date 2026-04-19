@@ -3,10 +3,10 @@ import { Upload } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
-import { TatraPrimaryButton, TatraSecondaryButton } from '@/components/tatra/buttons';
+import { TatraPrimaryButton } from '@/components/tatra/buttons';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
-import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { MutedText } from '@/components/tatra/Typography';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
 export default function SetupScreen() {
@@ -33,9 +33,7 @@ export default function SetupScreen() {
   return (
     <Screen scroll keyboard>
       <View className="flex-1 px-6 pt-4">
-        <BrandMark />
         <View className="mt-8 gap-2">
-          <SectionTitle>Nový event</SectionTitle>
           <MutedText>Doplň základné údaje. Ikona je voliteľná.</MutedText>
         </View>
 
@@ -70,7 +68,6 @@ export default function SetupScreen() {
 
         <View className="mt-16 gap-3 pb-4">
           <TatraPrimaryButton onPress={onContinue}>Pokračovať</TatraPrimaryButton>
-          <TatraSecondaryButton onPress={() => router.back()}>Späť</TatraSecondaryButton>
         </View>
       </View>
     </Screen>

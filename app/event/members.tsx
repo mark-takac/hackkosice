@@ -8,7 +8,7 @@ import { TatraSecondaryButton } from '@/components/tatra/buttons';
 import { EventBottomTabs } from '@/components/tatra/EventBottomTabs';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
-import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { MutedText, SectionTitle } from '@/components/tatra/Typography';
 import { formatEurCurrency } from '@/lib/formatMoney';
 import { hapticLight } from '@/lib/haptics';
 import type { ContributorMock } from '@/providers/EventFlowContext';
@@ -222,10 +222,8 @@ export default function MembersScreen() {
           contentContainerStyle={{ paddingBottom: 16 }}
           showsVerticalScrollIndicator={false}>
           <View className="px-6">
-            <BrandMark />
             <View className="mt-6 gap-1">
               <MutedText className="text-sm">Skupina</MutedText>
-              <SectionTitle className="text-xl">Členovia</SectionTitle>
               <MutedText className="mt-1 text-sm leading-5">
                 Prehľad kariet a správa účastníkov. Pozvánku môžeš kedykoľvek poslať znova.
               </MutedText>

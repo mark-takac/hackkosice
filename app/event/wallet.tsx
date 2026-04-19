@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { TatraPrimaryButton, TatraSecondaryButton } from '@/components/tatra/buttons';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
-import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { MutedText } from '@/components/tatra/Typography';
 
 export default function WalletScreen() {
   const goDash = () => {
@@ -21,10 +21,8 @@ export default function WalletScreen() {
   return (
     <Screen scroll>
       <View className="flex-1 justify-center px-6 py-12">
-        <BrandMark />
         <TatraPanelBleed className="mt-10 py-8">
-          <SectionTitle>Google Peňaženka</SectionTitle>
-          <MutedText className="mt-3">Chceš pridať kartu do Google Peňaženky a platiť telefonom?</MutedText>
+          <MutedText>Chceš pridať kartu do Google Peňaženky a platiť telefonom?</MutedText>
         </TatraPanelBleed>
         {showDemoNote ? (
           <MutedText className="mt-6 text-center text-sm leading-5">

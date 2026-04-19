@@ -5,7 +5,7 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { TatraPrimaryButton } from '@/components/tatra/buttons';
 import { Screen } from '@/components/tatra/Screen';
-import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { MutedText, SectionTitle } from '@/components/tatra/Typography';
 import { hapticLight } from '@/lib/haptics';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
@@ -38,13 +38,9 @@ export default function WelcomeScreen() {
       : 'border-tatra-border';
 
   return (
-    <Screen scroll keyboard>
+    <Screen scroll keyboard headerHideBack>
       <View className="flex-1 px-6 pb-8 pt-2">
-        <View className="items-center pt-2">
-          <BrandMark />
-        </View>
-
-        <View className="mt-8 gap-3">
+        <View className="mt-6 gap-3">
           <SectionTitle>
             Ahoj {userFirstName}, čo máš v pláne?{' '}
           </SectionTitle>

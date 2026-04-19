@@ -9,7 +9,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { TatraPrimaryButton } from '@/components/tatra/buttons';
 import { Screen } from '@/components/tatra/Screen';
 import { TatraPanelBleed } from '@/components/tatra/TatraPanelBleed';
-import { BrandMark, MutedText, SectionTitle } from '@/components/tatra/Typography';
+import { MutedText } from '@/components/tatra/Typography';
 import { useEventFlow } from '@/providers/EventFlowContext';
 
 /** Matches `tailwind.config.js` — `tatra.primary` */
@@ -165,17 +165,13 @@ export default function CardSuccessScreen() {
   }, []);
 
   return (
-    <Screen scroll>
+    <Screen scroll headerTitle={ready ? 'Karta je pripravená' : 'Pripravujeme kartu'}>
       <View className="w-full flex-1 px-6 pt-8">
         <View className="items-center">
-          <BrandMark />
-          <View className="mt-8">
+          <View className="mt-2">
             <CardReadyIcon ready={ready} />
           </View>
           <View className="mt-8 items-center gap-3">
-            <SectionTitle className="text-center">
-              {ready ? 'Karta je pripravená' : 'Pripravujeme kartu'}
-            </SectionTitle>
             <MutedText className="text-center">
               {ready ? (
                 <>
