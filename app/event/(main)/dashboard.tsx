@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
-import { Plus } from 'lucide-react-native';
+import { Check, ChevronDown, ChevronUp, Plus } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { EventBottomTabs } from '@/components/tatra/EventBottomTabs';
 import { Screen } from '@/components/tatra/Screen';
@@ -15,6 +15,7 @@ const PREVIEW_ROWS = 3;
 
 const INCOME_GREEN = '#22c55e';
 const EXPENSE_RED = '#ef4444';
+const SPLIT_RED = '#dc2626';
 
 function MoneyExpense({ amount }: { amount: number }) {
   const label = formatEurCurrency(-Math.abs(amount));
@@ -48,11 +49,50 @@ function MoneyBalance({ amount }: { amount: number }) {
 }
 
 export default function DashboardScreen() {
-  const { eventName, balanceEur, transactions, categories, contributors } = useEventFlow();
+  const {
+    eventName,
+    balanceEur,
+    transactions,
+    categories,
+    contributors,
+    tripSummaries,
+    activeTripId,
+    selectTrip,
+    splitCurrentTrip,
+  } = useEventFlow();
   const [showContributeInfo, setShowContributeInfo] = useState(false);
+  const [tripMenuOpen, setTripMenuOpen] = useState(false);
+
+  const displayTripName =
+    tripSummaries.length === 0 ? 'Žiadny výlet' : eventName.trim() || 'Skupinový budget';
 
   const contribute = () => {
     setShowContributeInfo((open) => !open);
+  };
+
+  const openAddTrip = () => {
+    setTripMenuOpen(false);
+    router.push('/event/setup');
+  };
+
+  const onSplitTrip = () => {
+    if (!activeTripId) return;
+    Alert.alert(
+      'Rozdeliť náklady?',
+      'Náklady sa vyrovnajú medzi členov a tento výlet sa zruší. Rozdelenie je zatiaľ len ukážka.',
+      [
+        { text: 'Zrušiť', style: 'cancel' },
+        {
+          text: 'Rozdeliť',
+          style: 'destructive',
+          onPress: () => {
+            const wasLast = tripSummaries.length <= 1;
+            splitCurrentTrip();
+            if (wasLast) router.replace('/event/welcome');
+          },
+        },
+      ],
+    );
   };
 
   const spendingByMember = useMemo(() => {
@@ -82,13 +122,59 @@ export default function DashboardScreen() {
           contentContainerStyle={{ paddingBottom: 16 }}
           showsVerticalScrollIndicator={false}>
           <View className="px-6">
-            <View className="mt-6 flex-row items-center justify-between">
-              <View className="flex-1 pr-2">
-                <MutedText className="text-sm">Aktívny event</MutedText>
-                <Text className="font-sans text-xl font-bold text-tatra-foreground" numberOfLines={1}>
-                  {eventName || 'Skupinový budget'}
+            <View className="mt-6">
+              <MutedText className="text-sm">Aktívny výlet</MutedText>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ expanded: tripMenuOpen }}
+                onPress={() => setTripMenuOpen((o) => !o)}
+                className="mt-2 flex-row items-center justify-between gap-2 rounded-xl border border-tatra-border bg-tatra-elevated px-4 py-3.5 active:opacity-90">
+                <Text className="flex-1 font-sans text-lg font-bold text-tatra-foreground" numberOfLines={1}>
+                  {displayTripName}
                 </Text>
-              </View>
+                {tripMenuOpen ? (
+                  <ChevronUp color="#94a3b8" size={22} />
+                ) : (
+                  <ChevronDown color="#94a3b8" size={22} />
+                )}
+              </Pressable>
+              {tripMenuOpen ? (
+                <View className="mt-2 overflow-hidden rounded-xl border border-tatra-border bg-tatra-elevated">
+                  {tripSummaries.map((t, index) => (
+                    <Pressable
+                      key={t.id}
+                      accessibilityRole="button"
+                      onPress={() => {
+                        selectTrip(t.id);
+                        setTripMenuOpen(false);
+                      }}
+                      className={`flex-row items-center gap-3 px-4 py-3.5 active:bg-white/5 ${
+                        index > 0 ? 'border-t border-tatra-border' : ''
+                      }`}>
+                      <Text
+                        className="flex-1 font-sans text-base font-semibold text-tatra-foreground"
+                        numberOfLines={1}>
+                        {t.name}
+                      </Text>
+                      {t.id === activeTripId ? (
+                        <Check color="#009fe3" size={20} strokeWidth={2.5} />
+                      ) : (
+                        <View className="h-5 w-5" />
+                      )}
+                    </Pressable>
+                  ))}
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Pridať nový výlet"
+                    onPress={openAddTrip}
+                    className="flex-row items-center gap-3 border-t border-tatra-border px-4 py-3.5 active:bg-white/5">
+                    <View className="h-9 w-9 items-center justify-center rounded-full bg-tatra-primary/15">
+                      <Plus color="#009fe3" size={20} strokeWidth={2.5} />
+                    </View>
+                    <Text className="font-sans text-base font-semibold text-tatra-primary">Pridať výlet</Text>
+                  </Pressable>
+                </View>
+              ) : null}
             </View>
           </View>
 
@@ -105,6 +191,15 @@ export default function DashboardScreen() {
                   className="flex-row items-center justify-center gap-2 rounded-xl bg-tatra-elevated py-3 active:opacity-90">
                   <Plus color="#009fe3" size={22} />
                   <Text className="font-sans text-base font-semibold text-tatra-primary">Prispieť do budgetu</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: !activeTripId }}
+                  disabled={!activeTripId}
+                  onPress={onSplitTrip}
+                  className="mt-3 flex-row items-center justify-center rounded-xl py-3 active:opacity-90 disabled:opacity-40"
+                  style={{ backgroundColor: SPLIT_RED }}>
+                  <Text className="font-sans text-base font-semibold text-white">Rozdeliť náklady</Text>
                 </Pressable>
               </View>
             </View>
